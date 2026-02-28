@@ -26,6 +26,13 @@ cargo clippy -- -W clippy::all  # lint
 
 `#[cfg(test)] mod tests`がmain.rs末尾にある。`app_with_holidays()`ヘルパーでモックデータ付きAppを生成。TestBackendで描画結果を検証する際、全角文字は空セルが挟まるので空白除去してからassertする。
 
+## CI / Release
+
+- `v*`タグをpushするとGitHub Actionsでクロスビルド→GitHub Releaseが自動作成される
+  - `git tag v0.1.0 && git push --tags`
+- GitHub Actionsのワークフローには必ず`timeout-minutes`を指定する
+- ワークフロー変更時は`docker run --rm -v "$(pwd):/repo" -w /repo rhysd/actionlint:latest -color`でlintする
+
 ## Style
 
 - 日本語の全角と半角の間にスペースを入れない（例: ○「TUIアプリ」 ×「TUI アプリ」）

@@ -6,21 +6,16 @@
 
 祝日データは[holidays-jp](https://holidays-jp.github.io/) APIから取得。オフライン時は祝日なしで動作します。
 
-## 必要環境
-
-- Rust 1.70+
-
-## ビルド・実行
+## インストール
 
 ```sh
-# ビルド
-cargo build --release
+curl -fsSL https://raw.githubusercontent.com/obikosato/jcal/main/install.sh | sh
+```
 
-# 実行
-cargo run --release
+ソースからビルドする場合(Rust 1.70+):
 
-# または直接バイナリを実行
-./target/release/jcal
+```sh
+cargo install --git https://github.com/obikosato/jcal.git
 ```
 
 ## 開発

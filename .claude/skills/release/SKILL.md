@@ -1,6 +1,11 @@
 ---
 name: release
 description: cargo-releaseで新しいバージョンをリリースする
+allowed_commands:
+  - "git tag"
+  - "git log"
+  - "cargo metadata"
+  - "cargo release"
 ---
 
 cargo-releaseを使って新しいバージョンをリリースしてください。

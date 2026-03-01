@@ -14,11 +14,12 @@ cargo clippy -- -W clippy::all  # lint
 
 ## Architecture
 
-3ファイル構成のTUIカレンダーアプリ。ratatui + crossterm。
+4ファイル構成のTUIカレンダーアプリ。ratatui + crossterm。
 
 - `src/app.rs` — `App`構造体(状態保持) + `fetch_holidays()`(holidays-jp APIからJSON取得、失敗時は空HashMap)
 - `src/ui.rs` — `draw()`でLayout::verticalで3分割(タイトル/カレンダー/フッター)して描画
-- `src/main.rs` — `handle_events()`(crossterm pollベースのイベントループ) + `main()`(祝日取得→Terminal初期化→ループ→復元)
+- `src/main.rs` — `main()`でサブコマンド分岐(引数なし→TUI、`update`→セルフアップデート) + `handle_events()`(crossterm pollベースのイベントループ) + `run_tui()`(Terminal初期化→ループ→復元)
+- `src/update.rs` — `run_update()`(self_updateクレートでGitHub Releasesから最新バイナリを取得・置換)
 
 ファイル構成を変更したらREADME・CLAUDE.mdも更新し、`/doc-check`スキルで整合性を検証する。
 

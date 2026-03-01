@@ -1,5 +1,6 @@
 mod app;
 mod ui;
+mod update;
 
 use std::io;
 
@@ -25,17 +26,15 @@ fn handle_events(app: &mut app::App) -> io::Result<()> {
     Ok(())
 }
 
-fn main() -> io::Result<()> {
+fn run_tui() -> io::Result<()> {
     let holidays = app::fetch_holidays();
     let mut app = app::App::new(holidays);
 
-    // Setup terminal
     terminal::enable_raw_mode()?;
     io::stdout().execute(EnterAlternateScreen)?;
     let mut terminal =
         ratatui::Terminal::new(ratatui::backend::CrosstermBackend::new(io::stdout()))?;
 
-    // Main loop
     loop {
         terminal.draw(|frame| ui::draw(frame, &app))?;
         handle_events(&mut app)?;
@@ -44,8 +43,26 @@ fn main() -> io::Result<()> {
         }
     }
 
-    // Restore terminal
     terminal::disable_raw_mode()?;
     io::stdout().execute(LeaveAlternateScreen)?;
     Ok(())
+}
+
+fn main() {
+    let args: Vec<String> = std::env::args().collect();
+
+    match args.get(1).map(String::as_str) {
+        None => {
+            if let Err(e) = run_tui() {
+                eprintln!("エラー: {e}");
+                std::process::exit(1);
+            }
+        }
+        Some("update") => update::run_update(),
+        Some(cmd) => {
+            eprintln!("不明なコマンド: {cmd}");
+            eprintln!("使い方: jcal [update]");
+            std::process::exit(1);
+        }
+    }
 }

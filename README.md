@@ -2,7 +2,7 @@
 
 ターミナルで`cal`コマンドのようにカレンダーを表示しつつ、日本の祝日をハイライト表示するTUIアプリケーション。
 
-![demo](demo/demo.gif)
+<img src="demo/demo.gif" alt="demo" width="440"/>
 
 祝日データは[holidays-jp](https://holidays-jp.github.io/) APIから取得。オフライン時は祝日なしで動作します。
 
@@ -51,7 +51,8 @@ jcal/
 │   ├── demo.tape   # VHS録画スクリプト
 │   └── demo.gif    # 生成されたデモGIF
 └── src/
-    ├── main.rs   # エントリポイント、イベント処理
-    ├── app.rs    # App構造体、祝日API取得
-    └── ui.rs     # TUI描画
+    ├── main.rs     # エントリポイント、サブコマンド分岐、イベント処理
+    ├── app.rs      # App構造体、祝日API取得
+    ├── ui.rs       # TUI描画
+    └── update.rs   # セルフアップデート（GitHub Releases経由）
 ```

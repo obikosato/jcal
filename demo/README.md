@@ -6,8 +6,8 @@
 # VHSのインストール
 brew install vhs
 
-# プロジェクトルートから実行
-vhs demo/demo.tape
+# demo/ディレクトリで実行
+cd demo && vhs demo.tape
 ```
 
 `demo.tape`を編集して録画内容を変更できます。

@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Format check
+        run: cargo fmt -- --check
+
+      - name: Lint
+        run: cargo clippy -- -W clippy::all
+
+      - name: Test
+        run: cargo test

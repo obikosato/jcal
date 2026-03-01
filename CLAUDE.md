@@ -14,19 +14,19 @@ cargo clippy -- -W clippy::all  # lint
 
 ## Architecture
 
-単一ファイル構成(`src/main.rs`)のTUIカレンダーアプリ。ratatui + crossterm。
+3ファイル構成のTUIカレンダーアプリ。ratatui + crossterm。
 
-- `App`構造体が状態を保持(year, month, holidays, today, should_quit)
-- `fetch_holidays()` → holidays-jp APIからJSON取得。失敗時は空HashMapで継続
-- `draw()` → Layout::verticalで3分割(タイトル/カレンダー/フッター)して描画
-- `handle_events()` → crossterm pollベースのイベントループ
-- `main()` → 祝日取得 → Terminal初期化 → ループ → Terminal復元
+- `src/app.rs` — `App`構造体(状態保持) + `fetch_holidays()`(holidays-jp APIからJSON取得、失敗時は空HashMap)
+- `src/ui.rs` — `draw()`でLayout::verticalで3分割(タイトル/カレンダー/フッター)して描画
+- `src/main.rs` — `handle_events()`(crossterm pollベースのイベントループ) + `main()`(祝日取得→Terminal初期化→ループ→復元)
+
+ファイル構成を変更したらREADME・CLAUDE.mdも更新し、`/doc-check`スキルで整合性を検証する。
 
 ## Testing
 
 TDDで進める。Red-Green-Refactorサイクルを守る。
 
-`#[cfg(test)] mod tests`がmain.rs末尾にある。`app_with_holidays()`ヘルパーでモックデータ付きAppを生成。TestBackendで描画結果を検証する際、全角文字は空セルが挟まるので空白除去してからassertする。
+`app.rs`にロジックテスト6件、`ui.rs`に描画テスト1件。各モジュール末尾の`#[cfg(test)] mod tests`に配置。`app_with_holidays()`ヘルパーでモックデータ付きAppを生成。TestBackendで描画結果を検証する際、全角文字は空セルが挟まるので空白除去してからassertする。
 
 CIと同じローカルチェックは`/check`スキルで実行。
 

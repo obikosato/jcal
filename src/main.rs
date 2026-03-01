@@ -2,14 +2,14 @@ use std::collections::HashMap;
 use std::io;
 
 use chrono::{Datelike, Local, NaiveDate, Weekday};
+use crossterm::ExecutableCommand;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use crossterm::terminal::{self, EnterAlternateScreen, LeaveAlternateScreen};
-use crossterm::ExecutableCommand;
+use ratatui::Frame;
 use ratatui::layout::{Constraint, Layout, Rect};
 use ratatui::style::{Color, Modifier, Style};
 use ratatui::text::{Line, Span};
 use ratatui::widgets::{Block, Borders, Paragraph};
-use ratatui::Frame;
 
 struct App {
     year: i32,
@@ -85,10 +85,10 @@ impl App {
     fn holidays_this_month(&self) -> Vec<(u32, &str)> {
         let mut list: Vec<(u32, &str)> = Vec::new();
         for day in 1..=self.days_in_month() {
-            if let Some(date) = NaiveDate::from_ymd_opt(self.year, self.month, day) {
-                if let Some(name) = self.holidays.get(&date) {
-                    list.push((day, name.as_str()));
-                }
+            if let Some(date) = NaiveDate::from_ymd_opt(self.year, self.month, day)
+                && let Some(name) = self.holidays.get(&date)
+            {
+                list.push((day, name.as_str()));
             }
         }
         list
@@ -236,18 +236,18 @@ fn render_footer(frame: &mut Frame, app: &App, area: Rect) {
 }
 
 fn handle_events(app: &mut App) -> io::Result<()> {
-    if event::poll(std::time::Duration::from_millis(100))? {
-        if let Event::Key(key) = event::read()? {
-            if key.kind != KeyEventKind::Press {
-                return Ok(());
-            }
-            match key.code {
-                KeyCode::Char('q') | KeyCode::Esc => app.should_quit = true,
-                KeyCode::Char('h') | KeyCode::Left => app.prev_month(),
-                KeyCode::Char('l') | KeyCode::Right => app.next_month(),
-                KeyCode::Char('t') => app.go_today(),
-                _ => {}
-            }
+    if event::poll(std::time::Duration::from_millis(100))?
+        && let Event::Key(key) = event::read()?
+    {
+        if key.kind != KeyEventKind::Press {
+            return Ok(());
+        }
+        match key.code {
+            KeyCode::Char('q') | KeyCode::Esc => app.should_quit = true,
+            KeyCode::Char('h') | KeyCode::Left => app.prev_month(),
+            KeyCode::Char('l') | KeyCode::Right => app.next_month(),
+            KeyCode::Char('t') => app.go_today(),
+            _ => {}
         }
     }
     Ok(())
@@ -281,7 +281,7 @@ fn main() -> io::Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use ratatui::{backend::TestBackend, Terminal};
+    use ratatui::{Terminal, backend::TestBackend};
 
     fn app_with_holidays(year: i32, month: u32, holidays: Vec<(&str, &str)>) -> App {
         let map: HashMap<NaiveDate, String> = holidays

@@ -49,6 +49,11 @@ impl App {
         }
     }
 
+    fn go_today(&mut self) {
+        self.year = self.today.year();
+        self.month = self.today.month();
+    }
+
     fn first_day_of_month(&self) -> NaiveDate {
         NaiveDate::from_ymd_opt(self.year, self.month, 1).unwrap()
     }
@@ -113,8 +118,8 @@ fn draw(frame: &mut Frame, app: &App) {
     let holiday_count = app.holidays_this_month().len().max(1); // 最低1行（"祝日なし"）
     let footer_height = (holiday_count + 1 + 2) as u16; // 祝日 + ヘルプ行 + 枠線
     let chunks = Layout::vertical([
-        Constraint::Length(3),            // title
-        Constraint::Min(8),              // calendar
+        Constraint::Length(3),             // title
+        Constraint::Min(8),                // calendar
         Constraint::Length(footer_height), // footer
     ])
     .split(frame.area());
@@ -222,7 +227,7 @@ fn render_footer(frame: &mut Frame, app: &App, area: Rect) {
     }
 
     lines.push(Line::from(Span::styled(
-        "  h/← prev   l/→ next   q/Esc quit",
+        "  h/← prev   l/→ next   t today   q/Esc quit",
         Style::default().fg(Color::DarkGray),
     )));
 
@@ -240,6 +245,7 @@ fn handle_events(app: &mut App) -> io::Result<()> {
                 KeyCode::Char('q') | KeyCode::Esc => app.should_quit = true,
                 KeyCode::Char('h') | KeyCode::Left => app.prev_month(),
                 KeyCode::Char('l') | KeyCode::Right => app.next_month(),
+                KeyCode::Char('t') => app.go_today(),
                 _ => {}
             }
         }
@@ -319,6 +325,17 @@ mod tests {
     fn days_in_february_non_leap() {
         let app = app_with_holidays(2026, 2, vec![]);
         assert_eq!(app.days_in_month(), 28);
+    }
+
+    #[test]
+    fn go_today_returns_to_current_month() {
+        let mut app = app_with_holidays(2026, 3, vec![]);
+        // 別の月に移動
+        app.year = 2025;
+        app.month = 8;
+        // tで今日に戻る
+        app.go_today();
+        assert_eq!((app.year, app.month), (2026, 3));
     }
 
     #[test]

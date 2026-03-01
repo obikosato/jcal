@@ -1,4 +1,4 @@
-use chrono::Datelike;
+use chrono::{Datelike, NaiveDate};
 use ratatui::Frame;
 use ratatui::layout::{Constraint, Layout, Rect};
 use ratatui::style::{Color, Modifier, Style};
@@ -8,8 +8,8 @@ use ratatui::widgets::{Block, Borders, Paragraph};
 use crate::app::App;
 
 pub fn draw(frame: &mut Frame, app: &App) {
-    let holiday_count = app.holidays_this_month().len().max(1); // 最低1行（"祝日なし"）
-    let footer_height = (holiday_count + 1 + 2) as u16; // 祝日 + ヘルプ行 + 枠線
+    let holidays = app.holidays_this_month();
+    let footer_height = (holidays.len().max(1) + 1 + 2) as u16; // 祝日(最低1行) + ヘルプ行 + 枠線
     let chunks = Layout::vertical([
         Constraint::Length(3),             // title
         Constraint::Min(8),                // calendar
@@ -19,7 +19,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
 
     render_title(frame, app, chunks[0]);
     render_calendar(frame, app, chunks[1]);
-    render_footer(frame, app, chunks[2]);
+    render_footer(frame, app, &holidays, chunks[2]);
 }
 
 fn render_title(frame: &mut Frame, app: &App, area: Rect) {
@@ -64,7 +64,7 @@ fn render_calendar(frame: &mut Frame, app: &App, area: Rect) {
 
     let mut col = start_col;
     for day in 1..=days {
-        let date = chrono::NaiveDate::from_ymd_opt(app.year, app.month, day).unwrap();
+        let date = NaiveDate::from_ymd_opt(app.year, app.month, day).unwrap();
         let is_holiday = app.holidays.contains_key(&date);
         let is_today = date == app.today;
         let is_sunday = col == 0;
@@ -101,17 +101,16 @@ fn render_calendar(frame: &mut Frame, app: &App, area: Rect) {
     frame.render_widget(paragraph, area);
 }
 
-fn render_footer(frame: &mut Frame, app: &App, area: Rect) {
+fn render_footer(frame: &mut Frame, app: &App, holidays: &[(u32, &str)], area: Rect) {
     let mut lines: Vec<Line> = Vec::new();
 
-    let holidays = app.holidays_this_month();
     if holidays.is_empty() {
         lines.push(Line::from(Span::styled(
             "  祝日なし",
             Style::default().fg(Color::DarkGray),
         )));
     } else {
-        for (day, name) in &holidays {
+        for (day, name) in holidays {
             lines.push(Line::from(Span::styled(
                 format!("  {}/{}  {}", app.month, day, name),
                 Style::default().fg(Color::Red),
@@ -130,33 +129,12 @@ fn render_footer(frame: &mut Frame, app: &App, area: Rect) {
 
 #[cfg(test)]
 mod tests {
-    use std::collections::HashMap;
-
-    use chrono::NaiveDate;
     use ratatui::Terminal;
     use ratatui::backend::TestBackend;
 
-    use crate::app::App;
+    use crate::app::tests::app_with_holidays;
 
     use super::*;
-
-    fn app_with_holidays(year: i32, month: u32, holidays: Vec<(&str, &str)>) -> App {
-        let map: HashMap<NaiveDate, String> = holidays
-            .into_iter()
-            .filter_map(|(date, name)| {
-                NaiveDate::parse_from_str(date, "%Y-%m-%d")
-                    .ok()
-                    .map(|d| (d, name.to_string()))
-            })
-            .collect();
-        App {
-            year,
-            month,
-            today: NaiveDate::from_ymd_opt(2026, 3, 1).unwrap(),
-            holidays: map,
-            should_quit: false,
-        }
-    }
 
     #[test]
     fn footer_shows_all_holidays_in_may() {

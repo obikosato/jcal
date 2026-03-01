@@ -106,10 +106,10 @@ pub fn fetch_holidays() -> HashMap<NaiveDate, String> {
 }
 
 #[cfg(test)]
-mod tests {
+pub(crate) mod tests {
     use super::*;
 
-    fn app_with_holidays(year: i32, month: u32, holidays: Vec<(&str, &str)>) -> App {
+    pub(crate) fn app_with_holidays(year: i32, month: u32, holidays: Vec<(&str, &str)>) -> App {
         let map: HashMap<NaiveDate, String> = holidays
             .into_iter()
             .filter_map(|(date, name)| {

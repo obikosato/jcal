@@ -993,7 +993,6 @@ dependencies = [
  "crossterm",
  "ratatui",
  "reqwest",
- "serde_json",
 ]
 
 [[package]]

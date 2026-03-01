@@ -30,6 +30,9 @@ cargo clippy -- -W clippy::all
 # フォーマットチェック（CI向け）
 cargo fmt -- --check
 
+# test
+cargo test
+
 # ビルド確認
 cargo build
 ```

@@ -51,5 +51,7 @@ jcal/
 │   ├── demo.tape   # VHS録画スクリプト
 │   └── demo.gif    # 生成されたデモGIF
 └── src/
-    └── main.rs
+    ├── main.rs   # エントリポイント、イベント処理
+    ├── app.rs    # App構造体、祝日API取得
+    └── ui.rs     # TUI描画
 ```

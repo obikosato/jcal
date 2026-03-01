@@ -39,7 +39,7 @@ cargo build
 
 ## 技術スタック
 
-ratatui + crosstermでTUI、chronoで日付処理、reqwestで祝日API取得。詳細は`Cargo.toml`を参照。
+[ratatui](https://github.com/ratatui/ratatui) + [crossterm](https://github.com/crossterm-rs/crossterm)でTUI、[chrono](https://github.com/chronotope/chrono)で日付処理、[reqwest](https://github.com/seanmonstar/reqwest)で祝日API取得。詳細は`Cargo.toml`を参照。
 
 ## ファイル構成
 

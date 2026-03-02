@@ -18,6 +18,14 @@ curl -fsSL https://raw.githubusercontent.com/obikosato/jcal/main/install.sh | sh
 cargo install --git https://github.com/obikosato/jcal.git
 ```
 
+## アップデート
+
+最新版をインストールし直すか、以下のコマンドで更新できます:
+
+```sh
+jcal update
+```
+
 ## 開発
 
 ```sh

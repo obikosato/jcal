@@ -59,9 +59,24 @@ fn main() {
             }
         }
         Some("update") => update::run_update(),
+        Some("-v") | Some("--version") => {
+            println!("jcal {}", env!("CARGO_PKG_VERSION"));
+        }
+        Some("-h") | Some("--help") => {
+            println!("jcal - 日本の祝日付きTUIカレンダー");
+            println!();
+            println!("使い方: jcal [コマンド]");
+            println!();
+            println!("コマンド:");
+            println!("  update      最新バージョンにアップデート");
+            println!();
+            println!("オプション:");
+            println!("  -h, --help     ヘルプを表示");
+            println!("  -v, --version  バージョンを表示");
+        }
         Some(cmd) => {
             eprintln!("不明なコマンド: {cmd}");
-            eprintln!("使い方: jcal [update]");
+            eprintln!("使い方: jcal [-h] [-v] [update]");
             std::process::exit(1);
         }
     }

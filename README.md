@@ -43,6 +43,9 @@ cargo test
 
 # ビルド確認
 cargo build
+
+# 実行
+cargo run
 ```
 
 ## 技術スタック

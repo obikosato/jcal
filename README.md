@@ -48,6 +48,11 @@ cargo build
 cargo run
 ```
 
+## CI/CD
+
+- `main`へのpush / PRオープン → `cargo fmt --check` → `cargo clippy` → `cargo test`
+- `v*`タグのpush → macOS(arm64/x86_64)・Linux(x86_64)向けにクロスビルド → GitHub Releaseを自動作成
+
 ## 技術スタック
 
 [ratatui](https://github.com/ratatui/ratatui) + [crossterm](https://github.com/crossterm-rs/crossterm)でTUI、[chrono](https://github.com/chronotope/chrono)で日付処理、[reqwest](https://github.com/seanmonstar/reqwest)で祝日API取得。詳細は`Cargo.toml`を参照。

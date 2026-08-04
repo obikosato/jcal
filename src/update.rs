@@ -19,7 +19,7 @@ pub fn run_update() {
         }
     };
 
-    if status.updated() {
+    if status.is_updated() {
         println!("v{} にアップデートしました", status.version());
     } else {
         println!("すでに最新バージョン (v{}) です", CURRENT_VERSION);
